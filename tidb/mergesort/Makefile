@@ -8,3 +8,5 @@ test:
 bench:
 	go test -bench Benchmark -run xx -count 5 -benchmem
 
+select:
+	go run main.go mergesort.go
