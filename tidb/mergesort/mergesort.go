@@ -21,29 +21,29 @@ func MergeSort(src []int64) {
 
 	// tmp := make([]int64, len(src))
 	// reduceAllocsMergeSort(src, tmp, 0, len(src))
-	// BenchmarkMergeSort-12     	       1	2035406046 ns/op	134217728 B/op	       1 allocs/op
-	// BenchmarkMergeSort-12     	       1	1965327742 ns/op	134217728 B/op	       1 allocs/op
-	// BenchmarkMergeSort-12     	       1	1975974854 ns/op	134217728 B/op	       1 allocs/op
-	// BenchmarkMergeSort-12     	       1	1962721425 ns/op	134217824 B/op	       2 allocs/op
-	// BenchmarkMergeSort-12     	       1	2027160851 ns/op	134217728 B/op	       1 allocs/op
+	// BenchmarkMergeSort-12     	       1	1867831612 ns/op	134217728 B/op	       1 allocs/op
+	// BenchmarkMergeSort-12     	       1	1811441913 ns/op	134217728 B/op	       1 allocs/op
+	// BenchmarkMergeSort-12     	       1	1826893286 ns/op	134217728 B/op	       1 allocs/op
+	// BenchmarkMergeSort-12     	       1	1823869470 ns/op	134217824 B/op	       2 allocs/op
+	// BenchmarkMergeSort-12     	       1	1830547453 ns/op	134217728 B/op	       1 allocs/op
 
-	// parallelSize = 1048576
+	// parallelSize = 65536
 	// tmp := make([]int64, len(src))
 	// forkJoinMergeSort(src, tmp, 0, len(src))
-	// BenchmarkMergeSort-12     	       3	 423988063 ns/op	134221600 B/op	      29 allocs/op
-	// BenchmarkMergeSort-12     	       3	 440869802 ns/op	134220992 B/op	      24 allocs/op
-	// BenchmarkMergeSort-12     	       3	 420740024 ns/op	134220864 B/op	      23 allocs/op
-	// BenchmarkMergeSort-12     	       3	 443466346 ns/op	134220704 B/op	      21 allocs/op
-	// BenchmarkMergeSort-12     	       3	 458170922 ns/op	134220448 B/op	      20 allocs/op
+	// BenchmarkMergeSort-12     	       3	 391885365 ns/op	134252778 B/op	     302 allocs/op
+	// BenchmarkMergeSort-12     	       3	 388743634 ns/op	134251349 B/op	     299 allocs/op
+	// BenchmarkMergeSort-12     	       3	 384621605 ns/op	134247552 B/op	     274 allocs/op
+	// BenchmarkMergeSort-12     	       3	 393098988 ns/op	134245962 B/op	     278 allocs/op
+	// BenchmarkMergeSort-12     	       3	 385350466 ns/op	134243466 B/op	     262 allocs/op
 
-	parallelSize = 1048576
+	parallelSize = 65536
 	tmp := make([]int64, len(src))
 	forkJoinParallelMergeSort(src, tmp, 0, len(src))
-	// BenchmarkMergeSort-12     	       3	 377076490 ns/op	134230293 B/op	     109 allocs/op
-	// BenchmarkMergeSort-12     	       3	 364283067 ns/op	134229536 B/op	     111 allocs/op
-	// BenchmarkMergeSort-12     	       3	 372533358 ns/op	134228106 B/op	     102 allocs/op
-	// BenchmarkMergeSort-12     	       3	 371666103 ns/op	134229034 B/op	     111 allocs/op
-	// BenchmarkMergeSort-12     	       3	 425077293 ns/op	134228426 B/op	     107 allocs/op
+	// BenchmarkMergeSort-12     	       5	 322563114 ns/op	134521555 B/op	    3124 allocs/op
+	// BenchmarkMergeSort-12     	       5	 324330249 ns/op	134515097 B/op	    3071 allocs/op
+	// BenchmarkMergeSort-12     	       5	 347284114 ns/op	134515116 B/op	    3104 allocs/op
+	// BenchmarkMergeSort-12     	       5	 334181742 ns/op	134510028 B/op	    3048 allocs/op
+	// BenchmarkMergeSort-12     	       3	 350602169 ns/op	134517301 B/op	    3126 allocs/op
 }
 
 func naiveMergeSort(src []int64, low, high int) {
