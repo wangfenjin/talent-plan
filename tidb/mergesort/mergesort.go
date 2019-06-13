@@ -1,5 +1,7 @@
 package main
 
+import "errors"
+
 // MergeSort performs the merge sort algorithm.
 // Please supplement this function to accomplish the home work.
 func MergeSort(src []int64) {
@@ -88,7 +90,8 @@ func naiveMerge(src []int64, low, mid, high int) {
 }
 
 func reduceAllocsMergeSort(src []int64, tmp []int64, low, high int) {
-	if low+1 >= high {
+	if high-low < 32 {
+		_ = binarySort(src, low, high, low)
 		return
 	}
 	mid := low + (high-low)/2
@@ -224,4 +227,67 @@ func naiveMergeToTmp(src []int64, leftLow, leftHigh, rightLow, rightHigh int, tm
 	} else if rightLow < rightHigh && low < high {
 		copy(tmp[low:], src[rightLow:rightHigh])
 	}
+}
+
+// https://github.com/psilva261/timsort/blob/master/timsort.go#L233
+func binarySort(a []int64, lo, hi, start int) (err error) {
+	if lo > start || start > hi {
+		return errors.New("lo <= start && start <= hi")
+	}
+
+	if start == lo {
+		start++
+	}
+
+	for ; start < hi; start++ {
+		pivot := a[start]
+
+		// Set left (and right) to the index where a[start] (pivot) belongs
+		left := lo
+		right := start
+
+		if left > right {
+			return errors.New("left <= right")
+		}
+
+		/*
+		 * Invariants:
+		 *   pivot >= all in [lo, left).
+		 *   pivot <  all in [right, start).
+		 */
+		for left < right {
+			mid := int(uint(left+right) >> 1)
+			if pivot < a[mid] {
+				right = mid
+			} else {
+				left = mid + 1
+			}
+		}
+
+		if left != right {
+			return errors.New("left == right")
+		}
+
+		/*
+		 * The invariants still hold: pivot >= all in [lo, left) and
+		 * pivot < all in [left, start), so pivot belongs at left.  Note
+		 * that if there are elements equal to pivot, left points to the
+		 * first slot after them -- that's why this sort is stable.
+		 * Slide elements over to make room to make room for pivot.
+		 */
+		n := start - left // The number of elements to move
+		// just an optimization for copy in default case
+		if n <= 2 {
+			if n == 2 {
+				a[left+2] = a[left+1]
+			}
+			if n > 0 {
+				a[left+1] = a[left]
+			}
+		} else {
+			copy(a[left+1:], a[left:left+n])
+		}
+		a[left] = pivot
+	}
+	return
 }
