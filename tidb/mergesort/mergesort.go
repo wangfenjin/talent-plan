@@ -101,31 +101,28 @@ func reduceAllocsMerge(src []int64, tmp []int64, low, mid, high int) {
 	if low >= mid || mid >= high {
 		return
 	}
+	// copy left part into tmp
+	for i := low; i < mid; i++ {
+		tmp[i] = src[i]
+	}
 	ilow := low
 	imid := mid
 	i := low
 	for i < high && ilow < mid && imid < high {
-		if src[ilow] <= src[imid] {
-			tmp[i] = src[ilow]
+		if tmp[ilow] <= src[imid] {
+			src[i] = tmp[ilow]
 			ilow++
 		} else {
-			tmp[i] = src[imid]
+			src[i] = src[imid]
 			imid++
 		}
 		i++
 	}
+	// if element left in tmp, copy to src
 	for i < high && ilow < mid {
-		tmp[i] = src[ilow]
+		src[i] = tmp[ilow]
 		i++
 		ilow++
-	}
-	for i < high && imid < high {
-		tmp[i] = src[imid]
-		i++
-		imid++
-	}
-	for j := low; j < high; j++ {
-		src[j] = tmp[j]
 	}
 }
 
@@ -192,6 +189,7 @@ func internalParallelMerge(src []int64, leftLow, leftHigh, rightLow, rightHigh i
 	<-c
 }
 
+// binarySearch find the index in src[low, high) which
 func binarySearch(src []int64, target int64, low, high int) int {
 	mid := low + (high-low)/2
 	for low < high && mid > low && mid < high {
