@@ -101,13 +101,16 @@ func reduceAllocsMerge(src []int64, tmp []int64, low, mid, high int) {
 	if low >= mid || mid >= high {
 		return
 	}
-	// copy left part into tmp
-	for i := low; i < mid; i++ {
-		tmp[i] = src[i]
+	// not work in bench, but should work in reality
+	start := low
+	if mid-low > 100 {
+		start = binarySearch(src, src[mid], low, mid)
 	}
-	ilow := low
+	// copy src left part into tmp
+	copy(tmp[start:], src[start:mid])
+	ilow := start
 	imid := mid
-	i := low
+	i := start
 	for i < high && ilow < mid && imid < high {
 		if tmp[ilow] <= src[imid] {
 			src[i] = tmp[ilow]
@@ -119,10 +122,8 @@ func reduceAllocsMerge(src []int64, tmp []int64, low, mid, high int) {
 		i++
 	}
 	// if element left in tmp, copy to src
-	for i < high && ilow < mid {
-		src[i] = tmp[ilow]
-		i++
-		ilow++
+	if i < high && ilow < mid {
+		copy(src[i:], tmp[ilow:mid])
 	}
 }
 
@@ -165,9 +166,7 @@ func forkJoinParallelMergeSort(src []int64, tmp []int64, low, high int) {
 
 func parallelMerge(src, tmp []int64, low, mid, high int) {
 	internalParallelMerge(src, low, mid, mid, high, tmp, low, high)
-	for j := low; j < high; j++ {
-		src[j] = tmp[j]
-	}
+	copy(src[low:], tmp[low:high])
 }
 
 func internalParallelMerge(src []int64, leftLow, leftHigh, rightLow, rightHigh int, tmp []int64, low, high int) {
@@ -189,7 +188,7 @@ func internalParallelMerge(src []int64, leftLow, leftHigh, rightLow, rightHigh i
 	<-c
 }
 
-// binarySearch find the index in src[low, high) which
+// binarySearch find the index in src[low, high) which is greater than or equal to target
 func binarySearch(src []int64, target int64, low, high int) int {
 	mid := low + (high-low)/2
 	for low < high && mid > low && mid < high {
@@ -219,14 +218,10 @@ func naiveMergeToTmp(src []int64, leftLow, leftHigh, rightLow, rightHigh int, tm
 		}
 		low++
 	}
-	for leftLow < leftHigh && low < high {
-		tmp[low] = src[leftLow]
-		leftLow++
-		low++
-	}
-	for rightLow < rightHigh && low < high {
-		tmp[low] = src[rightLow]
-		rightLow++
-		low++
+	// only 1 part can left elements
+	if leftLow < leftHigh && low < high {
+		copy(tmp[low:], src[leftLow:leftHigh])
+	} else if rightLow < rightHigh && low < high {
+		copy(tmp[low:], src[rightLow:rightHigh])
 	}
 }
