@@ -1,6 +1,10 @@
 package main
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/psilva261/timsort"
+)
 
 // MergeSort performs the merge sort algorithm.
 // Please supplement this function to accomplish the home work.
@@ -26,6 +30,14 @@ func MergeSort(src []int64) {
 	// BenchmarkMergeSort-12     	       1	1826893286 ns/op	134217728 B/op	       1 allocs/op
 	// BenchmarkMergeSort-12     	       1	1823869470 ns/op	134217824 B/op	       2 allocs/op
 	// BenchmarkMergeSort-12     	       1	1830547453 ns/op	134217728 B/op	       1 allocs/op
+
+	// NOTE: very slow, slower than NormalSort
+	// timSort(src, 0, len(src))
+	// BenchmarkMergeSort-12     	       1	12127359432 ns/op	268434080 B/op	      20 allocs/op
+	// BenchmarkMergeSort-12     	       1	12242139117 ns/op	257778272 B/op	      20 allocs/op
+	// BenchmarkMergeSort-12     	       1	12049227596 ns/op	250469024 B/op	      16 allocs/op
+	// BenchmarkMergeSort-12     	       1	11900753235 ns/op	234217888 B/op	      19 allocs/op
+	// BenchmarkMergeSort-12     	       1	11539638930 ns/op	268434080 B/op	      20 allocs/op
 
 	// parallelSize = 65536
 	// tmp := make([]int64, len(src))
@@ -229,7 +241,7 @@ func naiveMergeToTmp(src []int64, leftLow, leftHigh, rightLow, rightHigh int, tm
 	}
 }
 
-// https://github.com/psilva261/timsort/blob/master/timsort.go#L233
+// Copy from https://github.com/psilva261/timsort/blob/master/timsort.go#L233
 func binarySort(a []int64, lo, hi, start int) (err error) {
 	if lo > start || start > hi {
 		return errors.New("lo <= start && start <= hi")
@@ -290,4 +302,16 @@ func binarySort(a []int64, lo, hi, start int) (err error) {
 		a[left] = pivot
 	}
 	return
+}
+
+// Bench timsort
+// IntSlice attaches the methods of Interface to []int64, sorting in increasing order.
+type IntSlice []int64
+
+func (p IntSlice) Len() int           { return len(p) }
+func (p IntSlice) Less(i, j int) bool { return p[i] < p[j] }
+func (p IntSlice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
+
+func timSort(src []int64, low, high int) {
+	timsort.TimSort(IntSlice(src[low:high]))
 }
