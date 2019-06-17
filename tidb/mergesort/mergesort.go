@@ -9,6 +9,8 @@ import (
 // MergeSort performs the merge sort algorithm.
 // Please supplement this function to accomplish the home work.
 func MergeSort(src []int64) {
+	// MBP15-2018
+
 	// NormalSort
 	// BenchmarkNormalSort-12    	       1	2975116034 ns/op	      64 B/op	       2 allocs/op
 	// BenchmarkNormalSort-12    	       1	3033260164 ns/op	      64 B/op	       2 allocs/op
@@ -16,6 +18,7 @@ func MergeSort(src []int64) {
 	// BenchmarkNormalSort-12    	       1	2998787076 ns/op	      64 B/op	       2 allocs/op
 	// BenchmarkNormalSort-12    	       1	2960347791 ns/op	      64 B/op	       2 allocs/op
 
+	// Same as normal sort, but more allocs
 	// naiveMergeSort(src, 0, len(src))
 	// BenchmarkMergeSort-12     	       1	2931003333 ns/op	3221234912 B/op	16777235 allocs/op
 	// BenchmarkMergeSort-12     	       1	2730617682 ns/op	3221225664 B/op	16777217 allocs/op
@@ -23,6 +26,7 @@ func MergeSort(src []int64) {
 	// BenchmarkMergeSort-12     	       1	2686156978 ns/op	3221226144 B/op	16777222 allocs/op
 	// BenchmarkMergeSort-12     	       1	2682699670 ns/op	3221227360 B/op	16777219 allocs/op
 
+	// 40% faster than normal sort because we pre-allocs extra space for merge
 	// tmp := make([]int64, len(src))
 	// reduceAllocsMergeSort(src, tmp, 0, len(src))
 	// BenchmarkMergeSort-12     	       1	1867831612 ns/op	134217728 B/op	       1 allocs/op
@@ -39,6 +43,7 @@ func MergeSort(src []int64) {
 	// BenchmarkMergeSort-12     	       1	11900753235 ns/op	234217888 B/op	      19 allocs/op
 	// BenchmarkMergeSort-12     	       1	11539638930 ns/op	268434080 B/op	      20 allocs/op
 
+	// 8 times faster than normal sort by pre-allocs extra space and parallel the split process
 	// parallelSize = 65536
 	// tmp := make([]int64, len(src))
 	// forkJoinMergeSort(src, tmp, 0, len(src))
@@ -48,6 +53,7 @@ func MergeSort(src []int64) {
 	// BenchmarkMergeSort-12     	       3	 393098988 ns/op	134245962 B/op	     278 allocs/op
 	// BenchmarkMergeSort-12     	       3	 385350466 ns/op	134243466 B/op	     262 allocs/op
 
+	// 9 times faster than normal sort by pre-allocs extra space and parallel the split process
 	parallelSize = 65536
 	tmp := make([]int64, len(src))
 	forkJoinParallelMergeSort(src, tmp, 0, len(src))

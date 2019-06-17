@@ -10,3 +10,6 @@ bench:
 
 select:
 	go run main.go mergesort.go
+
+pprof:
+	go test -bench BenchmarkMergeSort -run xx -count 5 -benchmem -cpuprofile=cpu.prof
