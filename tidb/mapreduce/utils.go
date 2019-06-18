@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"path"
 	"sort"
@@ -23,6 +24,67 @@ type RoundsArgs []RoundArgs
 type urlCount struct {
 	url string
 	cnt int
+}
+
+// FastTopN returns topN urls in the urlCntMap.
+// TODO: try heap sort?
+func FastTopN(urlCntMap map[string]int, n int) ([]string, []int) {
+	total := len(urlCntMap)
+	ucs := make([]*urlCount, 0, total)
+	for k, v := range urlCntMap {
+		ucs = append(ucs, &urlCount{k, v})
+	}
+	if total > 10*n {
+		partition(ucs, 0, len(urlCntMap), n)
+		total = n + 1
+	}
+	ucs = ucs[:total]
+	sort.Slice(ucs, func(i, j int) bool {
+		if ucs[i].cnt == ucs[j].cnt {
+			return ucs[i].url < ucs[j].url
+		}
+		return ucs[i].cnt > ucs[j].cnt
+	})
+	urls := make([]string, 0, n)
+	cnts := make([]int, 0, n)
+	for i, u := range ucs {
+		if i == n {
+			break
+		}
+		urls = append(urls, u.url)
+		cnts = append(cnts, u.cnt)
+	}
+	return urls, cnts
+}
+
+func partition(ucs []*urlCount, low, high, target int) {
+	if low >= high || target >= high {
+		return
+	}
+	pivotIndex := rand.Intn(high-low) + low
+	swap(ucs, pivotIndex, high-1)
+	pivot := ucs[high-1]
+	i := low - 1
+	for j := low; j < high-1; j++ {
+		if ucs[j].cnt > pivot.cnt || (ucs[j].cnt == pivot.cnt && ucs[j].url < pivot.url) {
+			i++
+			swap(ucs, i, j)
+		}
+	}
+	swap(ucs, i+1, high-1)
+	if i+1 == target {
+		return
+	} else if i+1 < target {
+		partition(ucs, i+2, high, target)
+	} else {
+		partition(ucs, low, i+1, target)
+	}
+}
+
+func swap(ucs []*urlCount, i, j int) {
+	tmp := ucs[i]
+	ucs[i] = ucs[j]
+	ucs[j] = tmp
 }
 
 // TopN returns topN urls in the urlCntMap.
