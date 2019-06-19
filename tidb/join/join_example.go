@@ -12,6 +12,10 @@ import (
 
 // JoinExample performs a simple hash join algorithm.
 func JoinExample(f0, f1 string, offset0, offset1 []int) (sum uint64) {
+	return HashJoin(f0, f1, offset0, offset1)
+}
+
+func HashJoin(f0, f1 string, offset0, offset1 []int) (sum uint64) {
 	tbl0, tbl1 := readCSVFileIntoTbl(f0), readCSVFileIntoTbl(f1)
 	hashtable := buildHashTable(tbl0, offset0)
 	for _, row := range tbl1 {
